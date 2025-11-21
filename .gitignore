@@ -43,10 +43,3 @@ pnpm-debug.log*
 
 # Outputs
 pages/api
-# Firebase Admin SDK
-firebase-admin-service.json
-
-# Local env files
-.env.local
-.env.development.local
-.env.production.local
