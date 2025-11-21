@@ -1,0 +1,27 @@
+
+{
+  "indexes": [
+    {
+      "collectionGroup": "comments",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "commentDate", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "likes",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "likeDate", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "fans",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "joinDate", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

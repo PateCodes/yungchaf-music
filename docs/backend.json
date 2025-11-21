@@ -1,0 +1,459 @@
+
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user account in the system.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The user's full display name."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        },
+        "role": {
+          "type": "string",
+          "description": "The user's role in the system.",
+          "enum": ["fan", "artist", "manager", "admin"]
+        },
+        "joinedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the user created their account."
+        }
+      },
+      "required": ["name", "email", "role", "joinedAt"]
+    },
+    "Fan": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Fan",
+      "type": "object",
+      "description": "Represents a fan's activity and engagement metrics.",
+      "properties": {
+        "joinDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the fan created their account."
+        },
+        "onlineStatus": {
+          "type": "boolean",
+          "description": "Indicates if the fan is currently online."
+        },
+        "lastActive": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp of the fan's last activity."
+        },
+        "likes": {
+          "type": "integer",
+          "description": "Total number of items the fan has liked."
+        },
+        "comments": {
+          "type": "integer",
+          "description": "Total number of comments the fan has posted."
+        },
+        "shares": {
+          "type": "integer",
+          "description": "Total number of items the fan has shared."
+        },
+        "contributions": {
+          "type": "number",
+          "description": "Total monetary value of contributions made by the fan."
+        },
+        "referrals": {
+          "type": "integer",
+          "description": "Total number of successful referrals made by the fan."
+        }
+      },
+      "required": ["onlineStatus", "lastActive", "joinDate"]
+    },
+    "Contribution": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Contribution",
+      "type": "object",
+      "description": "Represents a single monetary contribution from a fan.",
+      "properties": {
+        "fanId": {
+          "type": "string",
+          "description": "The ID of the fan who made the contribution."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The monetary amount of the contribution."
+        },
+        "currency": {
+          "type": "string",
+          "description": "The currency of the contribution (e.g., 'KES', 'USD').",
+          "enum": ["KES", "USD"]
+        },
+        "method": {
+          "type": "string",
+          "description": "The payment method used for the contribution (e.g., 'PayPal', 'M-Pesa')."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the contribution was made."
+        }
+      },
+      "required": ["fanId", "amount", "currency", "method", "timestamp"]
+    },
+    "Comment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Comment",
+      "type": "object",
+      "description": "Represents a comment made by a fan on a piece of content, with engagement features.",
+      "properties": {
+        "fanId": {
+          "type": "string",
+          "description": "The ID of the fan who posted the comment."
+        },
+        "content": {
+          "type": "string",
+          "description": "The content of the comment."
+        },
+        "commentDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the comment was posted."
+        },
+        "likes": {
+          "type": "array",
+          "description": "A list of user UIDs who have liked the comment.",
+          "items": { "type": "string" }
+        },
+        "reactions": {
+          "type": "object",
+          "description": "A map of emojis to a list of user UIDs who reacted with that emoji.",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "replies": {
+          "type": "array",
+          "description": "A list of replies to this comment.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "senderId": { "type": "string" },
+              "senderName": { "type": "string" },
+              "text": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" }
+            },
+            "required": ["id", "senderId", "senderName", "text", "timestamp"]
+          }
+        }
+      },
+      "required": ["fanId", "content", "commentDate"]
+    },
+    "Message": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Message",
+      "type": "object",
+      "description": "Represents a message sent via the contact form, with engagement features.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "message": {
+          "type": "string"
+        },
+        "submittedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastRepliedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the last reply to keep conversations sorted."
+        },
+        "fanId": {
+          "type": "string",
+          "description": "The UID of the fan who sent the message, if they were logged in."
+        },
+        "likes": {
+          "type": "array",
+          "description": "A list of user UIDs who have liked the message.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reactions": {
+          "type": "object",
+          "description": "A map of emojis to a list of user UIDs who reacted with that emoji.",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "replies": {
+          "type": "array",
+          "description": "A list of replies to this message from admins or the fan.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "senderId": { "type": "string" },
+              "senderName": { "type": "string" },
+              "text": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "senderType": { "type": "string", "enum": ["admin", "fan"] }
+            },
+            "required": ["senderId", "senderName", "text", "timestamp", "senderType"]
+          }
+        }
+      },
+      "required": ["name", "email", "message", "submittedAt"]
+    },
+    "Admin": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Admin",
+      "type": "object",
+      "description": "Represents an administrator with a specific role.",
+      "properties": {
+        "role": {
+          "type": "string",
+          "description": "The role of the administrator.",
+          "enum": ["admin", "super-admin"]
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "username": {
+          "type": "string"
+        },
+        "photoURL": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": ["role"]
+    },
+    "Like": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Like",
+      "type": "object",
+      "description": "Represents a like on a piece of content.",
+      "properties": {
+        "fanId": {
+          "type": "string",
+          "description": "The ID of the fan who liked the content."
+        },
+        "likeDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the content was liked."
+        }
+      },
+      "required": ["fanId", "likeDate"]
+    },
+    "PaymentMethod": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Payment Method",
+      "type": "object",
+      "description": "Represents a single method for fans to contribute.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The display name of the payment method (e.g., 'M-Pesa')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A short description of the method."
+        },
+        "details": {
+          "type": "object",
+          "description": "A flexible object to store method-specific details like paybill, account number, or email.",
+          "additionalProperties": true
+        },
+        "actionText": {
+          "type": "string",
+          "description": "Text for the call-to-action button (e.g., 'Contribute', 'Donate')."
+        },
+        "actionUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "A URL for methods that link to an external page (e.g., PayPal, BuyMeACoffee)."
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Controls whether the payment method is visible to users."
+        },
+        "icon": {
+          "type": "string",
+          "description": "A name or reference to an icon representing the method (e.g., 'paypal', 'credit-card')."
+        },
+        "order": {
+          "type": "number",
+          "description": "A number to control the display order on the frontend."
+        },
+        "providerId": {
+            "type": "string",
+            "description": "A unique identifier for the payment provider (e.g. 'mpesa', 'paypal')."
+        }
+      },
+      "required": ["name", "description", "details", "active", "icon", "order", "providerId"]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous",
+      "google"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{uid}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/entities/User"
+          },
+          "description": "Stores user profile information and role.",
+          "params": [
+            {
+              "name": "uid",
+              "description": "The user's authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/admins/{adminId}",
+        "definition": {
+          "entityName": "Admin",
+          "schema": {
+            "$ref": "#/entities/Admin"
+          },
+          "description": "Stores administrator roles. Only Super Admins can write to this collection.",
+          "params": [
+            {
+              "name": "adminId",
+              "description": "The admin's user UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/fans/{fanId}",
+        "definition": {
+          "entityName": "Fan",
+          "schema": {
+            "$ref": "#/entities/Fan"
+          },
+          "description": "Stores fan-specific engagement metrics.",
+          "params": [
+            {
+              "name": "fanId",
+              "description": "The fan's user UID."
+            }
+          ]
+        }
+      },
+       {
+        "path": "/messages/{messageId}",
+        "definition": {
+          "entityName": "Message",
+          "schema": {
+            "$ref": "#/entities/Message"
+          },
+          "description": "Stores contact form messages with engagement data.",
+          "params": [
+            {
+              "name": "messageId",
+              "description": "The unique identifier for the message."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/contributions/{contributionId}",
+        "definition": {
+          "entityName": "Contribution",
+          "schema": {
+            "$ref": "#/entities/Contribution"
+          },
+          "description": "A log of all monetary contributions from fans.",
+          "params": [
+            {
+              "name": "contributionId",
+              "description": "The unique identifier for the contribution."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/music/{musicId}/comments/{commentId}",
+        "definition": {
+          "entityName": "Comment",
+          "schema": {
+            "$ref": "#/entities/Comment"
+          },
+          "description": "A subcollection for comments on a specific music track.",
+          "params": [
+            {
+              "name": "musicId",
+              "description": "The ID of the music track."
+            },
+            {
+              "name": "commentId",
+              "description": "The unique identifier for the comment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/music/{musicId}/likes/{likeId}",
+        "definition": {
+          "entityName": "Like",
+          "schema": {
+            "$ref": "#/entities/Like"
+          },
+          "description": "A subcollection for likes on a specific music track.",
+          "params": [
+            {
+              "name": "musicId",
+              "description": "The ID of the music track."
+            },
+            {
+              "name": "likeId",
+              "description": "The unique identifier for the like, often the fanId."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/paymentMethods/{methodId}",
+        "definition": {
+          "entityName": "PaymentMethod",
+          "schema": {
+            "$ref": "#/entities/PaymentMethod"
+          },
+          "description": "Stores configuration for different contribution methods.",
+          "params": [
+            {
+              "name": "methodId",
+              "description": "The unique identifier for the payment method."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The data model is structured to separate user authentication and profile data from engagement-specific data. The `/users` collection holds core, user-specific information including their role, secured by UID. The `/fans` collection tracks engagement metrics, also keyed by UID, allowing for a clear separation of concerns. The `/admins` collection stores roles for administrators, with write access restricted to super-admins for security. The `/messages` collection stores contact form submissions and is enhanced with engagement data like likes, reactions, and now replies with timestamps. Global collections like `/contributions` and subcollections like `/music/{musicId}/comments` and `/music/{musicId}/likes` are used for simplified querying and management. The new `/paymentMethods` collection allows admins to dynamically control the information displayed on the support page from the dashboard."
+  }
+}
